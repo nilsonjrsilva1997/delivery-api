@@ -15,6 +15,10 @@ class RestaurantController extends Controller
     {
         $restaurant = Restaurant::where(['user_id' => Auth::id()])->first();
 
+        if(empty($restaurant)) {
+            return response()->json(['message' => 'Nenhum restaurante cadastrado'], 404);
+        }
+
         $restaurant['logo'] = url('/storage') . '/' . $restaurant['logo'];
         $restaurant['banner'] = url('/storage') . '/' . $restaurant['banner'];
 
@@ -36,15 +40,15 @@ class RestaurantController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'logo' => 'required|mimes:jpg,png|max:2048',
-            'banner' => 'required|mimes:jpg,png|max:2048'
+            'logo' => 'required|mimes:jpg,png,webp|max:2048',
+            'banner' => 'required|mimes:jpg,png,webp|max:2048'
         ]);
 
         $validatedData['user_id'] = Auth::id();
 
-        $countRestaurant = Restaurant::where(['user_id' => $validatedData['user_id']])->count();
+        $countRestaurant = Restaurant::where(['user_id' => $validatedData['user_id']])->first();
 
-        if($countRestaurant > 1) {
+        if(!empty($countRestaurant)) {
             return response()->json(['message' => 'Você já possui um restaurante cadastrado'], 422);
         }
 
@@ -65,15 +69,38 @@ class RestaurantController extends Controller
             'name' => 'string|max:255',
         ]);
 
-        $menu = Restaurant::findOrFail($id);
-        $menu->fill($validatedData);
-        $menu->save();
-        return $menu;
+        $restaurant = Restaurant::findOrFail($id);
+
+        if(Auth::id() != $restaurant['user_id']) {
+            return response()->json(['message' => 'Não autorizado'], 401);
+        }
+
+        if(!empty($request->file('logo'))) {
+            Storage::disk('public')->delete('/' . $restaurant['logo']);
+            $validatedData['logo'] = Storage::disk('public')->put('/', $request->file('logo'));
+        }
+
+        if(!empty($request->file('banner'))) {
+            Storage::disk('public')->delete('/' . $restaurant['banner']);
+            $validatedData['banner'] = Storage::disk('public')->put('/', $request->file('banner'));
+        }
+
+        $restaurant->fill($validatedData);
+        $restaurant->save();
+        return $restaurant;
     }
 
     public function destroy($id)
     {
-        $menu = Restaurant::findOrFail($id);
-        $menu->delete();
+        $restaurant = Restaurant::findOrFail($id);
+
+        if(Auth::id() != $restaurant['user_id']) {
+            return response()->json(['message' => 'Não autorizado'], 401);
+        }
+
+        Storage::disk('public')->delete('/' . $restaurant['banner']);
+        Storage::disk('public')->delete('/' . $restaurant['logo']);
+
+        $restaurant->delete();
     }
 }

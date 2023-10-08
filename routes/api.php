@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/', [RestaurantController::class, 'index']);
         Route::get('/{id}', [RestaurantController::class, 'show']);
         Route::post('/', [RestaurantController::class, 'create']);
-        Route::put('/{id}', [RestaurantController::class, 'update']);
+        Route::post('/{id}', [RestaurantController::class, 'update']);
         Route::delete('/{id}', [RestaurantController::class, 'destroy']);
     });
 
@@ -33,6 +34,14 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/', [CategoryController::class, 'create']);
         Route::put('/{id}', [CategoryController::class, 'update']);
         Route::delete('/{id}', [CategoryController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => 'products'], function () {
+        Route::get('/', [ProductController::class, 'index']);
+        Route::get('/{id}', [ProductController::class, 'show']);
+        Route::post('/', [ProductController::class, 'create']);
+        Route::post('/{id}', [ProductController::class, 'update']);
+        Route::delete('/{id}', [ProductController::class, 'destroy']);
     });
 
     Route::get('user_data', [UserController::class, 'getUserData']);
