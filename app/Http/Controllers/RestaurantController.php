@@ -41,7 +41,8 @@ class RestaurantController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'logo' => 'required|mimes:jpg,png,webp|max:2048',
-            'banner' => 'required|mimes:jpg,png,webp|max:2048'
+            'banner' => 'required|mimes:jpg,png,webp|max:2048',
+            'slug' => 'required|unique:restaurants',
         ]);
 
         $validatedData['user_id'] = Auth::id();
@@ -56,9 +57,6 @@ class RestaurantController extends Controller
         $validatedData['banner'] = Storage::disk('public')->put('/', $request->file('banner'));
 
         $restaurant = Restaurant::create($validatedData);
-
-        $restaurant['logo'] = url('/storage') . '/' . $restaurant['logo'];
-        $restaurant['banner'] = url('/storage') . '/' . $restaurant['banner'];
 
         return $restaurant;
     }

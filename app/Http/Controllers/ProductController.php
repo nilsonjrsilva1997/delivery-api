@@ -13,26 +13,26 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $restaurant = User::where(['id' => Auth::id()])->with('restaurants')->first();
+        $restaurant = User::where(['id' => Auth::id()])->with('restaurant')->first();
 
-        if(empty($restaurant['restaurants'])) {
+        if(empty($restaurant['restaurant'])) {
             return response()->json(['message' => 'Cadastre um restaurante na plataforma'], 422);
         }
 
-        $products = Product::where(['restaurant_id' => $restaurant['restaurants']['id']])->get();
+        $products = Product::where(['restaurant_id' => $restaurant['restaurant']['id']])->get();
 
         return $products;
     }
 
     public function show($id)
     {
-        $restaurant = User::where(['id' => Auth::id()])->with('restaurants')->first();
+        $restaurant = User::where(['id' => Auth::id()])->with('restaurant')->first();
 
-        if(empty($restaurant['restaurants'])) {
+        if(empty($restaurant['restaurant'])) {
             return response()->json(['message' => 'Cadastre um restaurante na plataforma'], 422);
         }
 
-        $product = Product::where(['restaurant_id' => $restaurant['restaurants']['id'], 'id' => $id])->first();
+        $product = Product::where(['restaurant_id' => $restaurant['restaurant']['id'], 'id' => $id])->first();
 
         if(empty($product)) {
             return response()->json(['message' => 'Produto não encontrado'], 404);
@@ -50,19 +50,17 @@ class ProductController extends Controller
             'price' => 'required|numeric',
         ]);
 
-        $restaurant = User::where(['id' => Auth::id()])->with('restaurants')->first();
+        $restaurant = User::where(['id' => Auth::id()])->with('restaurant')->first();
 
-        if(empty($restaurant['restaurants'])) {
+        if(empty($restaurant['restaurant'])) {
             return response()->json(['message' => 'Cadastre um restaurante na plataforma'], 422);
         }
 
-        $validatedData['restaurant_id'] = $restaurant['restaurants']['id'];
+        $validatedData['restaurant_id'] = $restaurant['restaurant']['id'];
 
         $validatedData['image'] = Storage::disk('public')->put('/', $request->file('image'));
 
         $product = Product::create($validatedData);
-
-        $product['image'] = url('/storage') . '/' . $product['image'];
 
         return $product;
     }
@@ -79,13 +77,13 @@ class ProductController extends Controller
 
         $product = Product::findOrFail($id);
 
-        $restaurant = User::where(['id' => Auth::id()])->with('restaurants')->first();
+        $restaurant = User::where(['id' => Auth::id()])->with('restaurant')->first();
 
-        if(empty($restaurant['restaurants'])) {
+        if(empty($restaurant['restaurant'])) {
             return response()->json(['message' => 'Cadastre um restaurante na plataforma'], 422);
         }
 
-        if($product['restaurant_id'] != $restaurant['id']) {
+        if($product['restaurant_id'] != $restaurant['restaurant']['id']) {
             return response()->json(['message' => 'Não autorizado'], 401);
         }
 
@@ -104,13 +102,13 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        $restaurant = User::where(['id' => Auth::id()])->with('restaurants')->first();
+        $restaurant = User::where(['id' => Auth::id()])->with('restaurant')->first();
 
-        if(empty($restaurant['restaurants'])) {
+        if(empty($restaurant['restaurant'])) {
             return response()->json(['message' => 'Cadastre um restaurante na plataforma'], 422);
         }
 
-        if($product['restaurant_id'] != $restaurant['id']) {
+        if($product['restaurant_id'] != $restaurant['restaurant']['id']) {
             return response()->json(['message' => 'Não autorizado'], 401);
         }
 

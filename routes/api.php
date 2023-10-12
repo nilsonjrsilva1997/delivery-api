@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
@@ -42,6 +43,14 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/', [ProductController::class, 'create']);
         Route::post('/{id}', [ProductController::class, 'update']);
         Route::delete('/{id}', [ProductController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => 'addresses'], function () {
+        Route::get('/', [AddressController::class, 'index']);
+        Route::get('/{id}', [AddressController::class, 'show']);
+        Route::post('/', [AddressController::class, 'create']);
+        Route::put('/{id}', [AddressController::class, 'update']);
+        Route::delete('/{id}', [AddressController::class, 'destroy']);
     });
 
     Route::get('user_data', [UserController::class, 'getUserData']);
