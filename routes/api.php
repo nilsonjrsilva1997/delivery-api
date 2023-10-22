@@ -53,6 +53,7 @@ Route::middleware('auth:api')->group(function () {
     Route::group(['prefix' => 'categories'], function () {
         Route::get('/', [CategoryController::class, 'index']);
         Route::get('/{id}', [CategoryController::class, 'show']);
+        Route::get('/{restauranId}/get', [CategoryController::class, 'categoriesByRestaurantId']);
         Route::post('/', [CategoryController::class, 'create']);
         Route::put('/{id}', [CategoryController::class, 'update']);
         Route::delete('/{id}', [CategoryController::class, 'destroy']);
@@ -92,14 +93,13 @@ Route::middleware('auth:api')->group(function () {
 
     Route::get('user_data', [UserController::class, 'getUserData']);
 });
+
 Route::group(['prefix' => 'notifications'], function () {
     Route::post('send-email-contact', [SendMailController::class, 'sendEmailContact']);
 });
 
 Route::get('merchant/{id}', [RestaurantController::class, 'getMerchantData']);
-
 Route::post('register', [AuthController::class, 'register']);
-
 Route::post('check_email', [AuthController::class, 'checkEmailExists']);
 Route::post('login', [AuthController::class, 'login']);
         

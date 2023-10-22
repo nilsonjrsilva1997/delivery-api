@@ -75,4 +75,8 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         $category->delete();
     }
+
+    public function categoriesByRestaurantId($restaurantId) {
+        return Category::where(['restaurant_id' => $restaurantId])->get();
+    }
 }
