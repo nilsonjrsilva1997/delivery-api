@@ -19,9 +19,6 @@ class RestaurantController extends Controller
             return response()->json(['message' => 'Nenhum restaurante cadastrado'], 404);
         }
 
-        $restaurant['logo'] = url('/storage') . '/' . $restaurant['logo'];
-        $restaurant['banner'] = url('/storage') . '/' . $restaurant['banner'];
-
         return $restaurant;
     }
 
@@ -100,5 +97,9 @@ class RestaurantController extends Controller
         Storage::disk('public')->delete('/' . $restaurant['logo']);
 
         $restaurant->delete();
+    }
+
+    public function getMerchantData($id) {
+        return Restaurant::where(['id' => $id])->with('categories')->with('categories.products')->with('contact')->first();
     }
 }

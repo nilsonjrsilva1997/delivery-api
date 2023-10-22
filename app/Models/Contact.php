@@ -5,19 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class Contact extends Model
 {
     use HasFactory;
-
-    protected $fillable = ['name', 'restaurant_id'];
-
-    protected $table = 'categories';
+    protected $table = 'contacts';
+    protected $fillable = ['whatsapp', 'email', 'facebook', 'instagram', 'youtube', 'linkedin', 'twiter', 'restaurant_id'];
 
     public function restaurant() {
         return $this->belongsTo(Restaurant::class, 'restaurant_id', 'id');
-    }
-
-    public function products() {
-        return $this->hasMany(Product::class);
     }
 }

@@ -62,7 +62,7 @@ class AddressController extends Controller
 
     public function destroy($id)
     {
-        $address = Address::where(['id' => $id, 'user_id' => Auth::id()]);
+        $address = Address::where(['id' => $id, 'user_id' => Auth::id()])->first();
 
         if(empty($address)) {
             return response()->json(['message' => 'Endereço não encontrado'], 404);
